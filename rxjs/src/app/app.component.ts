@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import {interval, Subscription, Observable, observable} from 'rxjs'
-import {map, filter, switchMap} from "rxjs/operators";
+import {Component} from '@angular/core';
+import {Subscription, Subject} from 'rxjs'  // Subject  расширенная версия observable
+
 
 @Component({
   selector: 'app-root',
@@ -9,39 +9,22 @@ import {map, filter, switchMap} from "rxjs/operators";
 })
 export class AppComponent {
   sub: Subscription
+  stream$: Subject<number> = new Subject<number>()
+  counter = 0
 
-constructor() {
-const stream$ = new Observable(observer =>{
+  constructor() {
+    this.sub = this.stream$.subscribe(value => {
+      console.log('Subscribe:', value)
+    })
+  }
 
-  setTimeout(()=>{
-    observer.next(1)}
-  , 1500)
+  stop() {
+    this.sub.unsubscribe()
+  }
 
+  next() {
+    this.counter++
+    this.stream$.next(this.counter)
+  }
 
-  setTimeout(()=>{
-      observer.complete()}
-    , 2100)
-
-
-  setTimeout(()=>{
-      observer.error('Something went wrong')}
-    , 1500)
-
-  setTimeout(()=>{
-      observer.next(2)}
-    , 2500)
-})
-
-
- this.sub = stream$
-    .subscribe(
-      value => console.log('Next:', value),
-      () => console.log('Completed')
-)
-}
-
-
-stop(){
-this.sub.unsubscribe()
-}
 }
